@@ -86,7 +86,7 @@ qrcode-lib: context [
 	get-data-modules-bits: function [ver [integer!]][
 		res: (16 * ver + 128) * ver + 64
 		if ver >= 2 [
-			align: ver / 7 + 2
+			align: (to integer! ver / 7) + 2
 			res: res - ((25 * align - 10) * align - 55)
 			if ver >= 7 [
 				res: res - 36
@@ -276,7 +276,7 @@ qrcode-lib: context [
 		num-blocks: pick NUM_ERROR_CORRECTION_BLOCKS/(ecl) version
 		block-ecc-bytes: pick ECC_CODEWORDS_PER_BLOCK/(ecl) version
 		modules-bits: get-data-modules-bits version
-		cap-bytes: modules-bits / 8 - (num-blocks * block-ecc-bytes)
+		cap-bytes: (to integer! modules-bits / 8) - (num-blocks * block-ecc-bytes)
 		reduce [
 			'num-blocks num-blocks
 			'block-ecc-bytes block-ecc-bytes
@@ -451,9 +451,9 @@ qrcode-lib: context [
 		block-ecc-bytes	[integer!]
 		cap-bytes		[integer!]
 	][
-		modules-bytes: modules-bits / 8
+		modules-bytes: (to integer! modules-bits / 8)
 		num-short-blocks: num-blocks - (modules-bytes % num-blocks)
-		short-block-data-len: modules-bytes / num-blocks - block-ecc-bytes
+		short-block-data-len: (to integer! modules-bytes / num-blocks) - block-ecc-bytes
 		res: make binary! modules-bytes
 		append/dup res 0 modules-bytes
 
@@ -695,11 +695,11 @@ qrcode-lib: context [
 
 	get-align-pattern-pos: function [version [integer!]][
 		if version = 1 [return none]
-		num-align: version / 7 + 2
+		num-align: (to integer! version / 7) + 2
 		res: make binary! num-align
 		append/dup res 0 num-align
 		step: either version = 32 [26][
-			(version * 4 + (num-align * 2) + 1) / (num-align * 2 - 2) * 2
+			(to integer! (version * 4 + (num-align * 2) + 1) / (num-align * 2 - 2)) * 2
 		]
 		i: num-align - 1
 		pos: version * 4 + 10
